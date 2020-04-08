@@ -53,9 +53,15 @@ class ElementFormController extends ElementController
         $user = $this->getUserFormController();
 
         $user->finished();
+        $page = $this;
+        do {
+            $page = $page->getPage();
+            if (!$page) {
+                user_error("Form not found in page");
+            }
+        } while (!($page instanceof \Page));
 
-        $page = $this->getPage();
-        $controller = Injector::inst()->create($page->getControllerName(), $this->element->getPage());
+        $controller = Injector::inst()->create($page->getControllerName(), $page);
         $element = $this->element;
 
         return $controller->customise([
